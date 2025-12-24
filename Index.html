@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Christmas Friendship Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --roblox-blue: #00A2FF;
+            --roblox-red: #E2231A;
+            --roblox-green: #00B060;
+            --bg-dark: #1B1D1E;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            margin: 0;
+            overflow: hidden; /* Prevent bounce scrolling */
+            touch-action: manipulation;
+        }
+
+        .roblox-font { font-family: 'Fredoka One', cursive; }
+
+        /* Mobile Optimization: Full Height Fix */
+        .page-container {
+            height: 100vh;
+            height: -webkit-fill-available;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Screen Transitions */
+        .screen {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            background: linear-gradient(180deg, #1B1D1E 0%, #2A2D2F 100%);
+        }
+
+        .screen.hidden {
+            transform: translateY(100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Roblox UI Components */
+        .btn-roblox {
+            background-color: var(--roblox-green);
+            border-bottom: 4px solid rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 1.25rem;
+            transition: transform 0.1s;
+            text-transform: uppercase;
+            font-family: 'Fredoka One', cursive;
+        }
+
+        .btn-roblox:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        .roblox-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        /* Snow Animation */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: white;
+            user-select: none;
+            z-index: 50;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        /* Loading Bar */
+        .progress-container {
+            width: 80%;
+            height: 10px;
+            background: #444;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--roblox-blue);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Level Specifics */
+        .memory-image {
+            width: 100%;
+            height: 180px;
+            background: #333;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container" id="app">
+        
+        <!-- LOADING SCREEN -->
+        <div id="screen-loading" class="screen z-[100]">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_black.svg" class="w-20 invert mb-6 animate-pulse" alt="Logo">
+            <h1 class="roblox-font text-2xl mb-2 text-white">JOINING FRIENDSHIP...</h1>
+            <p id="loading-text" class="text-sm text-gray-400">Authenticating with Santa...</p>
+            <div class="progress-container">
+                <div id="loading-progress" class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- LEVEL 1: LOGIN -->
+        <div id="screen-l1" class="screen hidden">
+            <div class="text-center">
+                <div class="w-32 h-32 bg-gray-700 rounded-full mx-auto mb-4 border-4 border-white flex items-center justify-center text-4xl overflow-hidden">
+                    <img id="avatar-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Friend" class="w-full h-full object-cover">
+                </div>
+                <h2 class="roblox-font text-xl mb-1">WELCOME BACK</h2>
+                <h1 class="roblox-font text-3xl mb-6 text-green-400">BEST FRIEND</h1>
+                <p class="text-gray-300 mb-8 px-4 text-center text-sm">You have been invited to the "Christmas 2024 Memory Event". Unlock the server to proceed.</p>
+                <button onclick="nextLevel(1)" class="btn-roblox w-full">JOIN SERVER</button>
+            </div>
+        </div>
+
+        <!-- LEVEL 2: MUSIC CHALLENGE -->
+        <div id="screen-l2" class="screen hidden">
+            <div class="roblox-font text-blue-400 text-lg mb-4">LEVEL 2: MUSIC TASTE</div>
+            <h2 class="text-center mb-6 font-bold">What's the track that kept us gaming this year?</h2>
+            
+            <div class="grid grid-cols-1 gap-4 w-full">
+                <button onclick="handleMusicChoice(false)" class="roblox-card text-left active:bg-red-900 transition-colors">
+                    <p class="text-xs text-gray-400 uppercase">Option A</p>
+                    <p class="font-bold">The one we both skipped 💀</p>
+                </button>
+                <button onclick="handleMusicChoice(true)" class="roblox-card text-left active:bg-green-900 transition-colors border-blue-500">
+                    <p class="text-xs text-gray-400 uppercase">Option B</p>
+                    <p class="font-bold">That banger we played on loop in Bloxburg 🎶</p>
+                </button>
+                <button onclick="handleMusicChoice(false)" class="roblox-card text-left active:bg-red-900 transition-colors">
+                    <p class="text-xs text-gray-400 uppercase">Option C</p>
+                    <p class="font-bold">Something my grandma likes</p>
+                </button>
+            </div>
+            
+            <p id="l2-feedback" class="mt-6 text-yellow-400 font-bold opacity-0 transition-opacity">CHOOSE WISELY!</p>
+        </div>
+
+        <!-- LEVEL 3: MEMORY OBBY -->
+        <div id="screen-l3" class="screen hidden overflow-y-auto block pt-10">
+            <div class="text-center px-6">
+                <div class="roblox-font text-red-400 text-lg mb-2">LEVEL 3: THE OBBY</div>
+                <p class="text-sm text-gray-400 mb-8">Scroll through the stages of 2024</p>
+                
+                <!-- Stage 1 -->
+                <div class="roblox-card mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="bg-red-500 text-[10px] px-2 py-1 rounded">STAGE 1</span>
+                        <span class="text-xs font-bold">The Noob Era</span>
+                    </div>
+                    <div class="memory-image flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-600">
+                        [Insert Screenshot of Your First Game Here]
+                    </div>
+                    <p class="text-sm text-left italic">"Remember when we spent 2 hours just trying to figure out the controls?"</p>
+                </div>
+
+                <!-- Stage 2 -->
+                <div class="roblox-card mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="bg-blue-500 text-[10px] px-2 py-1 rounded">STAGE 2</span>
+                        <span class="text-xs font-bold">The Grind</span>
+                    </div>
+                    <div class="memory-image flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-600">
+                        [Insert Screenshot of Your Favorite Pro Game]
+                    </div>
+                    <p class="text-sm text-left italic">"Our luck in this game was actually non-existent but we still won."</p>
+                </div>
+
+                <button onclick="nextLevel(3)" class="btn-roblox w-full mb-10">CHECKPOINT REACHED -> NEXT</button>
+            </div>
+        </div>
+
+        <!-- LEVEL 4: THE GIFT -->
+        <div id="screen-l4" class="screen hidden">
+             <div id="gift-container" class="relative">
+                <div id="gift-box" onclick="tapGift()" class="w-48 h-48 bg-red-600 rounded-lg flex items-center justify-center cursor-pointer shadow-2xl relative">
+                    <!-- Ribbon -->
+                    <div class="absolute w-full h-8 bg-yellow-400"></div>
+                    <div class="absolute w-8 h-full bg-yellow-400"></div>
+                    <span class="text-6xl z-10">🎁</span>
+                </div>
+                <div id="tap-hint" class="text-center mt-6 animate-bounce">
+                    <p class="roblox-font text-xl">TAP TO UNBOX!</p>
+                    <p class="text-xs text-gray-400">(Spam click to break the tape!)</p>
+                </div>
+                <div id="tap-progress" class="w-full bg-gray-800 h-2 mt-4 rounded-full overflow-hidden">
+                    <div id="tap-fill" class="h-full bg-green-500 w-0"></div>
+                </div>
+             </div>
+
+             <!-- THE FINAL MESSAGE (Hidden inside) -->
+             <div id="final-message" class="hidden text-center px-4 overflow-y-auto">
+                <div class="roblox-font text-3xl text-yellow-400 mb-4 animate-tada">LEGENDARY PULL! 🌟</div>
+                <div class="roblox-card bg-white/10 backdrop-blur-md border-2 border-yellow-400">
+                    <p class="text-left mb-4 leading-relaxed">
+                        Merry Christmas! 🎄<br><br>
+                        Even though we only hang out on Roblox, you've made 2024 a whole lot better. Thanks for being the best teammate, the better dresser in DTI, and for always being down to play whatever random game I find.<br><br>
+                        Hope your Christmas is filled with zero lag and plenty of fun. Stay awesome!
+                    </p>
+                    <hr class="border-white/20 mb-4">
+                    <p class="roblox-font text-sm text-blue-300">Awarded: 🏆 "Ultimate Best Friend Badge"</p>
+                </div>
+                <button onclick="resetApp()" class="mt-8 text-xs text-gray-500 underline uppercase">Replay Quest</button>
+             </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentLevel = 0;
+        let tapCount = 0;
+        const requiredTaps = 15;
+
+        // --- Initialization ---
+        window.onload = () => {
+            startLoading();
+            createSnowflakes();
+        };
+
+        function startLoading() {
+            const progress = document.getElementById('loading-progress');
+            const text = document.getElementById('loading-text');
+            const tips = [
+                "Collecting snowflakes...",
+                "Buying some Robux (jk I'm broke)...",
+                "Fixing the lag...",
+                "Decorating the lobby...",
+                "Checking for updates..."
+            ];
+            
+            let p = 0;
+            const interval = setInterval(() => {
+                p += Math.random() * 15;
+                if (p > 100) p = 100;
+                progress.style.width = p + '%';
+                
+                if (Math.random() > 0.7) {
+                    text.innerText = tips[Math.floor(Math.random() * tips.length)];
+                }
+
+                if (p === 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('screen-loading').classList.add('hidden');
+                        document.getElementById('screen-l1').classList.remove('hidden');
+                    }, 500);
+                }
+            }, 300);
+        }
+
+        // --- Navigation ---
+        function nextLevel(current) {
+            vibrate(50);
+            const screens = ['loading', 'l1', 'l2', 'l3', 'l4'];
+            document.getElementById(`screen-${screens[current]}`).classList.add('hidden');
+            document.getElementById(`screen-${screens[current + 1]}`).classList.remove('hidden');
+        }
+
+        // --- Level 2 Logic ---
+        function handleMusicChoice(isCorrect) {
+            const feedback = document.getElementById('l2-feedback');
+            vibrate(isCorrect ? 100 : [50, 50]);
+            
+            if (isCorrect) {
+                feedback.innerText = "YOU KNOW THE VIBES! ✅";
+                feedback.style.color = "#00B060";
+                feedback.style.opacity = "1";
+                setTimeout(() => nextLevel(2), 1500);
+            } else {
+                feedback.innerText = "WRONG! TRY AGAIN! ❌";
+                feedback.style.color = "#E2231A";
+                feedback.style.opacity = "1";
+            }
+        }
+
+        // --- Level 4 Logic (The Gift) ---
+        function tapGift() {
+            tapCount++;
+            vibrate(30);
+            
+            const fill = document.getElementById('tap-fill');
+            const box = document.getElementById('gift-box');
+            
+            fill.style.width = (tapCount / requiredTaps * 100) + '%';
+            box.style.transform = `scale(${1 + (tapCount * 0.02)}) rotate(${tapCount % 2 === 0 ? 2 : -2}deg)`;
+
+            if (tapCount >= requiredTaps) {
+                openGift();
+            }
+        }
+
+        function openGift() {
+            vibrate([100, 50, 200]);
+            document.getElementById('gift-container').classList.add('hidden');
+            document.getElementById('final-message').classList.remove('hidden');
+            // Flash effect
+            const flash = document.createElement('div');
+            flash.className = 'fixed inset-0 bg-white z-[200] animate-pulse';
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 500);
+        }
+
+        // --- Utility ---
+        function vibrate(pattern) {
+            if (navigator.vibrate) {
+                navigator.vibrate(pattern);
+            }
+        }
+
+        function createSnowflakes() {
+            setInterval(() => {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerHTML = '❄';
+                flake.style.left = Math.random() * 100 + 'vw';
+                flake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+                flake.style.opacity = Math.random();
+                flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(flake);
+                
+                setTimeout(() => flake.remove(), 5000);
+            }, 300);
+        }
+
+        function resetApp() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
